@@ -203,7 +203,7 @@ const CreateAppointment: React.FC = () => {
 
           <OpenDatePickerButton onPress={handleToggleDatePicker}>
             <OpenDatePickerButtonText>
-              Selecionar outra data
+              Selecionar uma data
             </OpenDatePickerButtonText>
           </OpenDatePickerButton>
 
