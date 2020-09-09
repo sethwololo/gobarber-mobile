@@ -37,6 +37,7 @@ import {
 
 interface RouteParams {
   providerId: string;
+  providerName: string;
 }
 
 export interface Provider {
@@ -64,6 +65,9 @@ const CreateAppointment: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState(
     routeParams.providerId,
+  );
+  const [selectedProviderName, setSelectedProviderName] = useState(
+    routeParams.providerName,
   );
 
   useEffect(() => {
@@ -96,9 +100,13 @@ const CreateAppointment: React.FC = () => {
     goBack();
   }, [goBack]);
 
-  const handleSelectProvider = useCallback((providerId: string) => {
-    setSelectedProvider(providerId);
-  }, []);
+  const handleSelectProvider = useCallback(
+    (providerId: string, providerName: string) => {
+      setSelectedProvider(providerId);
+      setSelectedProviderName(providerName);
+    },
+    [],
+  );
 
   const handleToggleDatePicker = useCallback(() => {
     setShowDatePicker(state => !state);
@@ -133,14 +141,23 @@ const CreateAppointment: React.FC = () => {
         date,
       });
 
-      navigate('AppointmentCreated', { date: date.getTime() });
+      navigate('AppointmentCreated', {
+        date: date.getTime(),
+        provider: selectedProviderName,
+      });
     } catch (error) {
       Alert.alert(
         'Erro ao criar agendamento',
         'Ocorreu um erro ao criar o agendamento. Tente novamente.',
       );
     }
-  }, [navigate, selectedDate, selectedHour, selectedProvider]);
+  }, [
+    navigate,
+    selectedDate,
+    selectedHour,
+    selectedProvider,
+    selectedProviderName,
+  ]);
 
   const morningAvailability = useMemo(() => {
     return availability
@@ -186,7 +203,7 @@ const CreateAppointment: React.FC = () => {
             keyExtractor={provider => provider.id}
             renderItem={({ item: provider }) => (
               <ProviderContainer
-                onPress={() => handleSelectProvider(provider.id)}
+                onPress={() => handleSelectProvider(provider.id, provider.name)}
                 selected={provider.id === selectedProvider}
               >
                 <ProviderAvatar source={{ uri: provider.avatar_url }} />
